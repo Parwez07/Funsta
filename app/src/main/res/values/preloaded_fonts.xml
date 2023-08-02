@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/acme</item>
+        <item>@font/adamina</item>
+        <item>@font/alata</item>
+        <item>@font/alegreya_sc</item>
+        <item>@font/average_sans</item>
+        <item>@font/baloo</item>
+        <item>@font/bangers</item>
+        <item>@font/finger_paint</item>
+        <item>@font/lily_script_one</item>
+        <item>@font/metal_mania</item>
+        <item>@font/roboto_slab</item>
+        <item>@font/waiting_for_the_sunrise</item>
+    </array>
+</resources>
