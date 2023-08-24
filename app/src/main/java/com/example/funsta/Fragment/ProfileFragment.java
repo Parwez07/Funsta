@@ -1,8 +1,5 @@
 package com.example.funsta.Fragment;
 
-import static android.app.appsearch.AppSearchResult.RESULT_OK;
-import static android.content.ContentValues.TAG;
-
 
 import android.Manifest;
 import android.app.Activity;
@@ -10,19 +7,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,15 +22,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.funsta.Adapter.friendAdapter;
+import com.example.funsta.Adapter.followerAdapter;
 import com.example.funsta.Model.UserModel;
-import com.example.funsta.Model.friendModel;
+import com.example.funsta.Model.followModel;
 import com.example.funsta.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -53,7 +42,6 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -61,13 +49,13 @@ public class ProfileFragment extends Fragment {
 
     private Bitmap selectedImg;
     TextView userName;
-    EditText intrest;
-    ImageView edit , verifyAccount;
+    TextView intrest, followers, friends, photos;
+    ImageView edit, verifyAccount, profile;
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 101;
-    public ActivityResultLauncher<Intent> ActivityResultSelectImg;
+    public ActivityResultLauncher<Intent> ActivityResultSelectImg, ActivityResultProfile;
 
     RecyclerView friendRv;
-    ArrayList<friendModel> friendList;
+    ArrayList<followModel> friendList;
     ImageView changeCoverPic, idProfile;
 
     FirebaseAuth auth;
@@ -92,57 +80,84 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
         friendRv = view.findViewById(R.id.friendRv);
         friendList = new ArrayList<>();
         changeCoverPic = view.findViewById(R.id.changeCoverPhoto);
         idProfile = view.findViewById(R.id.idProfile);
-        userName = view.findViewById(R.id.userName);
+        userName = view.findViewById(R.id.profileName);
         intrest = view.findViewById(R.id.intrest);
         edit = view.findViewById(R.id.edit);
         intrest.setEnabled(false);
         verifyAccount = view.findViewById(R.id.verifyAccount);
+        profile = view.findViewById(R.id.profile_image);
+        friends = view.findViewById(R.id.idFriends);
+        followers = view.findViewById(R.id.idFollowers);
+        photos = view.findViewById(R.id.idPhotos);
 
         registerActivityForSelectImg();
 
         fetchingCoverPhoto();
 
-        friendList.add(new friendModel(R.drawable.inaya));
-        friendList.add(new friendModel(R.drawable.profile_image));
-        friendList.add(new friendModel(R.drawable.inaya));
-        friendList.add(new friendModel(R.drawable.profile_image));
-        friendList.add(new friendModel(R.drawable.inaya));
-        friendList.add(new friendModel(R.drawable.profile_image));
-        friendList.add(new friendModel(R.drawable.inaya));
-        friendList.add(new friendModel(R.drawable.profile_image));
-        friendList.add(new friendModel(R.drawable.profile));
 
-        friendAdapter adapter = new friendAdapter(getContext(), friendList);
+        followerAdapter adapter = new followerAdapter(getContext(), friendList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         friendRv.setLayoutManager(layoutManager);
         friendRv.setAdapter(adapter);
 
+        database.getReference().child("Users")
+                .child(auth.getUid())
+                .child("followers")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        friendList.clear();
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            followModel follow = dataSnapshot.getValue(followModel.class);
+                            friendList.add(follow);
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
 
-        changeCoverPic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
-                if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(getContext()), android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, REQUEST_ID_MULTIPLE_PERMISSIONS);
-                } else {
-                    Intent galleryIntent = new Intent();
-                    galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-                    galleryIntent.setType("image/*");
-                    galleryIntent.putExtra("resultcode",1);
+                    }
+                });
 
+        changeCoverPic.setOnClickListener(v -> {
 
-                    //startActivityForResult(galleryIntent, REQUEST_PICK_IMAGE);
-                    ActivityResultSelectImg.launch(galleryIntent);
-                    Log.d("incoverpic", "correct");
-                }
+            if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(getContext()), Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, REQUEST_ID_MULTIPLE_PERMISSIONS);
+            } else {
+                Intent galleryIntent = new Intent();
+                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                galleryIntent.setType("image/*");
+                galleryIntent.putExtra("code", 1);
+
+                //startActivityForResult(galleryIntent, REQUEST_PICK_IMAGE);
+                ActivityResultSelectImg.launch(galleryIntent);
+                Log.d("incoverpic", "correct");
             }
         });
 
+        verifyAccount.setOnClickListener(v -> {
+            if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(getContext()), Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, REQUEST_ID_MULTIPLE_PERMISSIONS);
+            } else {
+                Intent galleryIntent = new Intent();
+                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                galleryIntent.setType("image/*");
+                galleryIntent.putExtra("code", 2);
+
+                //startActivityForResult(galleryIntent, REQUEST_PICK_IMAGE);
+                ActivityResultProfile.launch(galleryIntent);
+                Log.d("incoverpic", "correct inside the coverPhoto");
+            }
+
+        });
 
 
         return view;
@@ -157,12 +172,18 @@ public class ProfileFragment extends Fragment {
                 if (snapshot.exists()) {
 
                     UserModel user = snapshot.getValue(UserModel.class);
-
+                    Log.d("userDetails",user.getFollowersCount()+" "+user);
                     Picasso.get().load(user.getCover_photo())
                             .placeholder(R.drawable.picture)
                             .into(idProfile);
-                    idProfile.setImageDrawable(null);
+                    //idProfile.setImageDrawable(null);
                     userName.setText(user.getName());
+                    Picasso.get().load(user.getProfile())
+                            .placeholder(R.drawable.picture)
+                            .into(profile);
+                    followers.setText(user.getFollowersCount()+"");
+
+
                 }
             }
 
@@ -176,40 +197,75 @@ public class ProfileFragment extends Fragment {
     public void registerActivityForSelectImg() {
 
         ActivityResultSelectImg = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @RequiresApi(api = Build.VERSION_CODES.S)
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
 
-                        int resultCode = result.getResultCode();
-                        Intent data = result.getData();
-                        Log.d("incoverpic", "result " + resultCode + " " + data + " " + Activity.RESULT_OK);
-                        if (resultCode == Activity.RESULT_OK && data != null) {
-                            Uri uri = data.getData();
-                            try {
-                                selectedImg = MediaStore.Images.Media.getBitmap(Objects.requireNonNull(getActivity()).getContentResolver(), data.getData());
-                                idProfile.setImageURI(uri);
-                                final StorageReference reference = storage.getReference().child("cover_photo")
-                                        .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
-                                reference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                    @Override
-                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                        Toast.makeText(getContext(), "Cover_photo saved", Toast.LENGTH_SHORT).show();
-                                        reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                            @Override
-                                            public void onSuccess(Uri uri) {
-                                                database.getReference().child("Users").child(auth.getUid()).child("cover_photo")
-                                                        .setValue(uri.toString());
-                                            }
-                                        });
-                                    }
-                                });
+                result -> {
 
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
+                    int resultCode = result.getResultCode();
+                    Intent data = result.getData();
+                    Log.d("incoverpic", "result " + resultCode + " " + data + " " + Activity.RESULT_OK);
+
+                    if (resultCode == Activity.RESULT_OK && data != null) {
+
+                        Uri uri = data.getData();
+                        try {
+                            selectedImg = MediaStore.Images.Media.getBitmap(Objects.requireNonNull(getActivity()).getContentResolver(), data.getData());
+                            idProfile.setImageURI(uri);
+                            final StorageReference reference = storage.getReference().child("cover_photo")
+                                    .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+                            reference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    Toast.makeText(getContext(), "Cover_photo saved", Toast.LENGTH_SHORT).show();
+                                    reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            database.getReference().child("Users").child(auth.getUid()).child("cover_photo")
+                                                    .setValue(uri.toString());
+                                        }
+                                    });
+                                }
+                            });
+
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
                         }
                     }
+                });
+
+
+        ActivityResultProfile = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+
+                    Intent data = result.getData();
+                    int resultCode = result.getResultCode();
+
+                    if (resultCode == Activity.RESULT_OK && data != null) {
+
+                        Uri uri = data.getData();
+                        try {
+                            selectedImg = MediaStore.Images.Media.getBitmap(Objects.requireNonNull(getActivity()).getContentResolver(), data.getData());
+                            profile.setImageURI(uri);
+                            final StorageReference reference = storage.getReference().child("profile_img")
+                                    .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+                            reference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    Toast.makeText(getContext(), "profile_img saved", Toast.LENGTH_SHORT).show();
+                                    reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            database.getReference().child("Users").child(auth.getUid()).child("profile")
+                                                    .setValue(uri.toString());
+                                        }
+                                    });
+                                }
+                            });
+
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
                 });
     }
 

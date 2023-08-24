@@ -1,8 +1,47 @@
 package com.example.funsta.Model;
 
+import com.example.funsta.R;
+
 public class UserModel {
     private String name,email,password;
-    private String cover_photo;
+    private String cover_photo,profile,userId;
+    int followersCount;
+    int postCount;
+
+    public int getPostCount() {
+        return postCount;
+    }
+
+    public void setPostCount(int postCount) {
+        this.postCount = postCount;
+    }
+
+    public int getFollowersCount() {
+        return followersCount;
+    }
+
+    public void setFollowersCount(int followersCount) {
+        this.followersCount = followersCount;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+
+        this.profile = profile;
+
+    }
+
     private String intrest;
 
     public String getIntrest() {

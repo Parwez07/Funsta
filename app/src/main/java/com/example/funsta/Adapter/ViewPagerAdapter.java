@@ -5,43 +5,42 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.Lifecycle;
+import androidx.viewpager.widget.PagerTitleStrip;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.funsta.Fragment.Notifi_NotificationFragment;
-import com.example.funsta.Fragment.RequestFragment;
+import java.util.ArrayList;
 
-public class ViewPagerAdapter extends FragmentPagerAdapter {
+public class ViewPagerAdapter extends FragmentPagerAdapter  {
 
+    ArrayList<Fragment> fragmentList = new ArrayList<>();
+    ArrayList<String> titleList = new ArrayList<>();
 
     public ViewPagerAdapter(@NonNull FragmentManager fm) {
-        super(fm);
+        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     }
+
 
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        switch (position){
-            case 0:
-                return new Notifi_NotificationFragment();
-            case 1:
-                return  new RequestFragment();
-            default:return  new Notifi_NotificationFragment();
-        }
+        return fragmentList.get(position);
     }
 
     @Override
     public int getCount() {
-        return 2;
+        return fragmentList.size();
     }
 
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
-        String tilte =null;
-        if(position==0)
-            tilte ="NOTIFICATION";
-        else if (position==1)
-            tilte="REQUEST";
-        return tilte;
+        return titleList.get(position);
+    }
+
+    public void  addFragment (Fragment fragment ,String title){
+
+        fragmentList.add(fragment);
+        titleList.add(title);
     }
 }

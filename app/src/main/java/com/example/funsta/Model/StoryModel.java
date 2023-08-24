@@ -1,46 +1,38 @@
 package com.example.funsta.Model;
 
+import java.util.ArrayList;
+
 public class StoryModel {
 
-    int story,storyType,profile_img;
-    String profile_name;
+    private  String storyBy;
+    private long storyAt;
 
-    public StoryModel(int story, int storyType, int profile_img, String profile_name) {
-        this.story = story;
-        this.storyType = storyType;
-        this.profile_img = profile_img;
-        this.profile_name = profile_name;
+    ArrayList<userStories>stories;
+
+    public StoryModel() {
     }
 
-    public void setStory(int story) {
-        this.story = story;
+    public String getStoryBy() {
+        return storyBy;
     }
 
-    public void setStoryType(int storyType) {
-        this.storyType = storyType;
+    public void setStoryBy(String storyBy) {
+        this.storyBy = storyBy;
     }
 
-    public void setProfile_img(int profile_img) {
-        this.profile_img = profile_img;
+    public long getStoryAt() {
+        return storyAt;
     }
 
-    public void setProfile_name(String profile_name) {
-        this.profile_name = profile_name;
+    public void setStoryAt(long storyAt) {
+        this.storyAt = storyAt;
     }
 
-    public int getStory() {
-        return story;
+    public ArrayList<userStories> getStories() {
+        return stories;
     }
 
-    public int getStoryType() {
-        return storyType;
-    }
-
-    public int getProfile_img() {
-        return profile_img;
-    }
-
-    public String getProfile_name() {
-        return profile_name;
+    public void setStories(ArrayList<userStories> stories) {
+        this.stories = stories;
     }
 }

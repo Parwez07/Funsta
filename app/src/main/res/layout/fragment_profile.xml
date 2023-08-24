@@ -100,7 +100,7 @@
         app:layout_constraintVertical_bias="0.9" />
 
     <TextView
-        android:id="@+id/userName"
+        android:id="@+id/profileName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -123,9 +123,9 @@
         android:gravity="center"
         android:text="Andriod Devleoper"
         android:textSize="18dp"
-        app:layout_constraintEnd_toEndOf="@+id/userName"
-        app:layout_constraintStart_toStartOf="@+id/userName"
-        app:layout_constraintTop_toBottomOf="@+id/userName" />
+        app:layout_constraintEnd_toEndOf="@+id/profileName"
+        app:layout_constraintStart_toStartOf="@+id/profileName"
+        app:layout_constraintTop_toBottomOf="@+id/profileName" />
 
     <View
         android:id="@+id/addFriendView"
@@ -209,7 +209,6 @@
         app:cardCornerRadius="10dp"
         app:cardElevation="5dp"
         app:cardMaxElevation="5dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -236,7 +235,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textView12"
+                android:id="@+id/idFollowers"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="460"
@@ -272,7 +271,7 @@
                 app:layout_constraintTop_toTopOf="@+id/view12" />
 
             <TextView
-                android:id="@+id/textView13"
+                android:id="@+id/idFriends"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="120"
@@ -308,7 +307,7 @@
                 app:layout_constraintTop_toTopOf="@+id/view13" />
 
             <TextView
-                android:id="@+id/textView14"
+                android:id="@+id/idPhotos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="10"
@@ -332,7 +331,6 @@
         android:text="@string/thought"
         android:textColor="@color/black"
         android:textSize="@dimen/_13mdp"
-        app:layout_constraintBottom_toTopOf="@+id/textView6"
         app:layout_constraintEnd_toEndOf="@+id/cardView"
         app:layout_constraintHorizontal_bias="0.5"
 
@@ -350,32 +348,25 @@
         android:textSize="@dimen/_16mdp"
         android:textStyle="bold"
 
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintStart_toStartOf="@+id/textView5"
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/linearLayout2"
+
+    <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+        android:id="@+id/friendRv"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
+        app:shimmer_demo_child_count="10"
+        app:shimmer_demo_grid_child_count="2"
+        app:shimmer_demo_layout="@layout/friend_demo"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6">
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/friendRv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView6" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <ImageView
         android:id="@+id/edit"
@@ -386,6 +377,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/intrest"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toEndOf="@+id/intrest"
-        app:layout_constraintTop_toBottomOf="@+id/userName" />
+        app:layout_constraintTop_toBottomOf="@+id/profileName" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,66 +1,262 @@
 package com.example.funsta.Fragment;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.funsta.Model.PostModel;
+import com.example.funsta.Model.UserModel;
 import com.example.funsta.R;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link PostFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.Date;
+import java.util.Objects;
+
+
 public class PostFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    Button btnPost;
+    EditText postDescription;
+    ImageView addImg, postImg, profileImg;
+    TextView userName;
+    Uri uri;
+    String description;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    FirebaseAuth auth;
+    FirebaseStorage storage;
+    FirebaseDatabase database;
+
+    ProgressDialog dialog;
+
+    public ActivityResultLauncher<Intent> ActivityResultSelectImg;
 
     public PostFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PostFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static PostFragment newInstance(String param1, String param2) {
-        PostFragment fragment = new PostFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        auth = FirebaseAuth.getInstance();
+        storage = FirebaseStorage.getInstance();
+        database = FirebaseDatabase.getInstance();
+        dialog = new ProgressDialog(getContext());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_post, container, false);
+        View view = inflater.inflate(R.layout.fragment_post, container, false);
+        btnPost = view.findViewById(R.id.btnPost);
+        postDescription = view.findViewById(R.id.idPostDescription);
+        addImg = view.findViewById(R.id.btnImg);
+        postImg = view.findViewById(R.id.imgPost);
+        profileImg = view.findViewById(R.id.profile_image);
+        userName = view.findViewById(R.id.idName);
+
+
+        registerActivityForSelectImg();
+        fetchingCoverPhoto();
+
+
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setTitle("Post Uploading");
+        dialog.setMessage("Please Wait...");
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+
+        postDescription.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                description = postDescription.getText().toString();
+                if (!description.isEmpty()) {
+                    btnPost.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.gradient_2));
+                    btnPost.setTextColor(getContext().getColor(R.color.white));
+                    btnPost.setEnabled(true);
+                } else {
+                    btnPost.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.following_btn));
+                    btnPost.setTextColor(getContext().getColor(R.color.material_dynamic_neutral70));
+                    btnPost.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        addImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(getContext()), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    new ActivityResultContracts.RequestMultiplePermissions();
+                } else {
+                    Intent galleryIntent = new Intent();
+                    galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                    galleryIntent.setType("image/*");
+
+                    //startActivityForResult(galleryIntent, REQUEST_PICK_IMAGE);
+                    ActivityResultSelectImg.launch(galleryIntent);
+                    Log.d("incoverpic", "correct");
+                }
+            }
+        });
+
+        btnPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.show();
+
+                final StorageReference reference = storage.getReference().child("posts")
+                        .child(auth.getUid())
+                        .child(new Date().getTime() + "");
+
+                if(uri!=null) {
+                    reference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    PostModel post = new PostModel();
+                                    post.setPostImg(uri.toString());
+                                    post.setPostedBy(auth.getUid());
+                                    post.setPostDescription(postDescription.getText().toString());
+                                    post.setPostedAt(new Date().getTime());
+
+                                    database.getReference().child("posts")
+                                            .push()
+                                            .setValue(post)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    Toast.makeText(getContext(), "Posted Succesful", Toast.LENGTH_SHORT).show();
+                                                    dialog.dismiss();
+
+                                                }
+                                            });
+                                }
+                            });
+                        }
+                    });
+                }
+                else{
+                    PostModel post = new PostModel();
+                    post.setPostedBy(auth.getUid());
+                    post.setPostDescription(postDescription.getText().toString());
+                    post.setPostedAt(new Date().getTime());
+
+                    database.getReference().child("posts")
+                            .push()
+                            .setValue(post)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Toast.makeText(getContext(), "Posted Succesful", Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+
+                                }
+                            });
+                }
+            }
+        });
+
+        return view;
+    }
+
+    public void registerActivityForSelectImg() {
+
+        ActivityResultSelectImg = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+
+                int resultCode = result.getResultCode();
+                Intent data = result.getData();
+                Log.d("incoverpic", "result " + resultCode + " " + data + " " + Activity.RESULT_OK);
+
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    uri = data.getData();
+                    postImg.setImageURI(uri);
+                    postImg.setVisibility(View.VISIBLE);
+                    btnPost.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.gradient_2));
+                    btnPost.setTextColor(getContext().getColor(R.color.white));
+                    btnPost.setEnabled(true);
+
+                }
+            }
+        });
+
+    }
+
+    private void fetchingCoverPhoto() {
+
+        database.getReference().child("Users").child(auth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if (snapshot.exists()) {
+
+                    UserModel user = snapshot.getValue(UserModel.class);
+                    Log.d("userDetails", user.getFollowersCount() + " " + user);
+
+                    //idProfile.setImageDrawable(null);
+                    userName.setText(user.getName());
+                    Picasso.get().load(user.getProfile())
+                            .placeholder(R.drawable.picture)
+                            .into(profileImg);
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }

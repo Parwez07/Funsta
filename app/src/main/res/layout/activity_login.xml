@@ -69,6 +69,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
+            app:boxStrokeColor="@color/color3"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="@dimen/_40mdp"
             android:layout_marginRight="20dp"
@@ -98,6 +99,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginRight="20dp"
+            app:boxStrokeColor="@color/color3"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
             app:endIconMode="password_toggle"
@@ -118,12 +120,13 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnLogin"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
+            app:boxStrokeColor="@color/color1"
             android:background="@drawable/buttom_bg"
             android:backgroundTint="@null"
             android:gravity="center"

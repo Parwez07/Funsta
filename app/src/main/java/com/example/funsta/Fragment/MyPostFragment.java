@@ -10,13 +10,14 @@ import android.view.ViewGroup;
 
 import com.example.funsta.R;
 
+public class MyPostFragment extends Fragment {
 
-public class RequestFragment extends Fragment {
 
-
-    public RequestFragment() {
+    public MyPostFragment() {
         // Required empty public constructor
     }
+
+
 
 
     @Override
@@ -29,6 +30,7 @@ public class RequestFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_request, container, false);
+        View view = inflater.inflate(R.layout.fragment_my_post, container, false);
+        return view;
     }
 }

@@ -11,6 +11,8 @@
         <item>@font/finger_paint</item>
         <item>@font/lily_script_one</item>
         <item>@font/metal_mania</item>
+        <item>@font/roboto_black</item>
+        <item>@font/roboto_medium</item>
         <item>@font/roboto_slab</item>
         <item>@font/waiting_for_the_sunrise</item>
     </array>

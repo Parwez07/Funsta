@@ -71,6 +71,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginTop="@dimen/_20mdp"
             android:layout_marginRight="20dp"
+            app:boxStrokeColor="@color/color3"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
             app:helperText="*Required"
@@ -94,6 +95,7 @@
             android:layout_height="60dp"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
+            app:boxStrokeColor="@color/color3"
             android:layout_marginRight="20dp"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
@@ -120,6 +122,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginRight="20dp"
             app:boxStrokeWidth="0dp"
+            app:boxStrokeColor="@color/color3"
             app:boxStrokeWidthFocused="0dp"
             app:endIconMode="password_toggle"
             app:endIconCheckable="false"
@@ -142,6 +145,7 @@
             android:layout_height="60dp"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
+            app:boxStrokeColor="@color/color1"
             android:layout_marginRight="20dp"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
@@ -163,10 +167,11 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSignUp"
             android:layout_width="300dp"
             android:layout_height="@dimen/_40mdp"
+            app:boxStrokeColor="@color/color3"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/_10mdp"
             android:background="@drawable/buttom_bg"

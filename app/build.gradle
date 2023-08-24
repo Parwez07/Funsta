@@ -39,6 +39,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.navigation:navigation-fragment:2.6.0'
     implementation 'androidx.navigation:navigation-ui:2.6.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -77,6 +78,20 @@ dependencies {
 
     // picasso 
     implementation 'com.squareup.picasso:picasso:2.8'
+
+    //Time Ago library
+    implementation 'com.github.marlonlom:timeago:4.0.3'
+
+    //Circular Status
+    implementation 'com.github.3llomi:CircularStatusView:V1.0.3'
+
+    // story viewer
+    implementation 'com.github.OMARIHAMZA:StoryView:1.0.2-alpha'
+    // shimer effect
+    implementation 'com.github.sharish:ShimmerRecyclerView:v1.3'
+
+
+
 
 }
 apply plugin: 'com.google.gms.google-services'

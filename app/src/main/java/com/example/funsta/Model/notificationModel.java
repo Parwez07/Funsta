@@ -2,37 +2,66 @@ package com.example.funsta.Model;
 
 public class notificationModel {
 
-    int profile;
-    String notification;
-    String time;
+    String notificationBy;
+    String notificationId;
+    Long notificatonAt;
+    String type;
+    String postId,posdtedBy;
+    Boolean checkOpen = false;
 
-    public notificationModel(int profile, String notification, String time) {
-        this.profile = profile;
-        this.notification = notification;
-        this.time = time;
+    public String getNotificationId() {
+        return notificationId;
     }
 
-    public int getProfile() {
-        return profile;
+    public void setNotificationId(String notificationId) {
+        this.notificationId = notificationId;
     }
 
-    public void setProfile(int profile) {
-        this.profile = profile;
+    public String getNotificationBy() {
+        return notificationBy;
     }
 
-    public String getNotification() {
-        return notification;
+    public void setNotificationBy(String notificationBy) {
+        this.notificationBy = notificationBy;
     }
 
-    public void setNotification(String notification) {
-        this.notification = notification;
+    public Long getNotificatonAt() {
+        return notificatonAt;
     }
 
-    public String getTime() {
-        return time;
+    public void setNotificatonAt(Long notificatonAt) {
+        this.notificatonAt = notificatonAt;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getPostId() {
+        return postId;
+    }
+
+    public void setPostId(String postId) {
+        this.postId = postId;
+    }
+
+    public String getPosdtedBy() {
+        return posdtedBy;
+    }
+
+    public void setPosdtedBy(String posdtedBy) {
+        this.posdtedBy = posdtedBy;
+    }
+
+    public Boolean getCheckOpen() {
+        return checkOpen;
+    }
+
+    public void setCheckOpen(Boolean checkOpen) {
+        this.checkOpen = checkOpen;
     }
 }
