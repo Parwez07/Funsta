@@ -1,8 +1,8 @@
 package com.example.funsta.Model;
 
-public class followersModel {
+public class followModel {
 
-    public followersModel() {
+    public followModel() {
     }
 
     public String getFollowedBy() {

@@ -1,14 +1,20 @@
 package com.example.funsta.Model;
 
-public class UserModel {
-    private String name;
-    private String email;
-    private String password;
+import com.example.funsta.R;
 
-    private String profession;
-    private String cover_photo, profile, userId;
-    int followingCounts,followersCount;
-    int postCounts;
+public class UserModel {
+    private String name,email,password;
+    private String cover_photo,profile,userId;
+    int followersCount;
+    int postCount;
+
+    public int getPostCount() {
+        return postCount;
+    }
+
+    public void setPostCount(int postCount) {
+        this.postCount = postCount;
+    }
 
     public int getFollowersCount() {
         return followersCount;
@@ -16,30 +22,6 @@ public class UserModel {
 
     public void setFollowersCount(int followersCount) {
         this.followersCount = followersCount;
-    }
-
-    public String getProfession() {
-        return profession;
-    }
-
-    public void setProfession(String profession) {
-        this.profession = profession;
-    }
-
-    public int getPostCounts() {
-        return postCounts;
-    }
-
-    public void setPostCounts(int postCounts) {
-        this.postCounts = postCounts;
-    }
-
-    public int getFollowingCounts() {
-        return followingCounts;
-    }
-
-    public void setFollowingCounts(int followingCounts) {
-        this.followingCounts = followingCounts;
     }
 
     public String getUserId() {
@@ -60,6 +42,17 @@ public class UserModel {
 
     }
 
+    private String intrest;
+
+    public String getIntrest() {
+        return intrest;
+    }
+
+    public void setIntrest(String intrest) {
+        this.intrest = intrest;
+    }
+
+
 
     public UserModel() {
     }
@@ -73,11 +66,10 @@ public class UserModel {
     }
 
 
-    public UserModel(String name, String email, String password, String profession) {
+    public UserModel(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.profession = profession;
     }
 
     public String getName() {

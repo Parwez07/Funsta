@@ -2,7 +2,6 @@ package com.example.funsta.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Objects;
 
 public class postAdapter extends RecyclerView.Adapter<postAdapter.DashboardViewHolder> {
 
@@ -73,7 +71,7 @@ public class postAdapter extends RecyclerView.Adapter<postAdapter.DashboardViewH
                                 .placeholder(R.drawable.picture)
                                 .into(holder.profileImg);
                         holder.name.setText(user.getName());
-                        holder.about.setText(user.getProfession());
+                        holder.about.setText(user.getIntrest());
                         holder.like.setText(model.getPostLikes() + "");
                         holder.comment.setText(model.getCommentCounts()+"");
 
@@ -93,7 +91,7 @@ public class postAdapter extends RecyclerView.Adapter<postAdapter.DashboardViewH
         database.getReference().child("posts")
                 .child(model.getPostId())
                 .child("likes")
-                .child(Objects.requireNonNull(auth.getUid())).addListenerForSingleValueEvent(new ValueEventListener() {
+                .child(auth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if(snapshot.exists()){
@@ -210,11 +208,9 @@ public class postAdapter extends RecyclerView.Adapter<postAdapter.DashboardViewH
             like = itemView.findViewById(R.id.like);
             share = itemView.findViewById(R.id.share);
             comment = itemView.findViewById(R.id.profileName);
-            about = itemView.findViewById(R.id.profession);
+            about = itemView.findViewById(R.id.intrest);
             name = itemView.findViewById(R.id.userName);
             postDescription = itemView.findViewById(R.id.postDescription);
         }
     }
-
-
 }

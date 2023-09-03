@@ -2,7 +2,6 @@ package com.example.funsta.Adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +16,9 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.funsta.Model.UserModel;
-import com.example.funsta.Model.followersModel;
+import com.example.funsta.Model.followModel;
 import com.example.funsta.Model.notificationModel;
 import com.example.funsta.R;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,8 +27,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 
 public class searchAdapter extends RecyclerView.Adapter<searchAdapter.seachViewHolder> {
@@ -38,20 +34,9 @@ public class searchAdapter extends RecyclerView.Adapter<searchAdapter.seachViewH
     Context context;
     ArrayList<UserModel> list;
 
-
-    ArrayList<UserModel> duplicateList;
-
-    FirebaseDatabase database;
-
-    FirebaseAuth auth;
-
     public searchAdapter(Context context, ArrayList<UserModel> list) {
         this.context = context;
         this.list = list;
-        this.duplicateList = new ArrayList<>(list);
-        database = FirebaseDatabase.getInstance();
-        auth = FirebaseAuth.getInstance();
-
     }
 
     @NonNull
@@ -66,76 +51,8 @@ public class searchAdapter extends RecyclerView.Adapter<searchAdapter.seachViewH
     @Override
     public void onBindViewHolder(@NonNull seachViewHolder holder, int position) {
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        if (duplicateList.size() > 0) {
-            UserModel user = duplicateList.get(position);
-
-            userDetailsFollowUnfollow(user, holder);
-        } else {
-            UserModel user = list.get(position);
-
-            userDetailsFollowUnfollow(user, holder);
-        }
-
-
-    }
-
-    @Override
-    public int getItemCount() {
-        return duplicateList.size() == 0 ? list.size() : duplicateList.size();
-    }
-
-    public class seachViewHolder extends RecyclerView.ViewHolder {
-
-        Button btnFollow;
-        TextView idName, profession;
-        ImageView idProfile;
-
-        public seachViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            btnFollow = itemView.findViewById(R.id.btnEdit);
-            idName = itemView.findViewById(R.id.idName);
-            profession = itemView.findViewById(R.id.idProfession);
-            idProfile = itemView.findViewById(R.id.profile_image);
-        }
-    }
-
-    public void filterSearch(String name) {
-
-        Log.d("filterS", "idhar aa rahe hai");
-        duplicateList.clear();
-        if (name.isEmpty()) {
-            Log.d("filterS", "name empty hai");
-            duplicateList.addAll(list);
-
-        } else {
-
-            for (UserModel user : list) {
-                if (user.getName().toLowerCase().contains(name.toLowerCase())) {
-                    Log.d("filterS", user.getName() + " idhar aa hai");
-                    duplicateList.add(user);
-                }
-
-            }
-            Collections.sort(duplicateList, new NameComparator(name.toLowerCase()));
-
-        }
-
-
-        notifyDataSetChanged();
-
-    }
-
-
-    private void userDetailsFollowUnfollow(UserModel user, seachViewHolder holder) {
-        holder.profession.setText(user.getProfession());
+        UserModel user = list.get(position);
+        //holder.intrest.setText(user.getIntrest());
         holder.idName.setText(user.getName());
         Picasso.get().load(user.getProfile())
                 .placeholder(R.drawable.picture)
@@ -183,9 +100,6 @@ public class searchAdapter extends RecyclerView.Adapter<searchAdapter.seachViewH
                                                                     holder.btnFollow.setText("Follow");
                                                                     holder.btnFollow.setTextColor(context.getColor(R.color.white));
                                                                     Toast.makeText(context, "you Unfollow " + user.getName(), Toast.LENGTH_SHORT).show();
-
-                                                                    // here we are deleting the following user and decrementing the count
-                                                                    deleteFollowing(user);
                                                                 });
                                                     });
                                         }
@@ -196,7 +110,7 @@ public class searchAdapter extends RecyclerView.Adapter<searchAdapter.seachViewH
                             });
                         } else {
                             holder.btnFollow.setOnClickListener(v -> {
-                                followersModel follow = new followersModel();
+                                followModel follow = new followModel();
                                 follow.setFollowedBy(FirebaseAuth.getInstance().getUid());
                                 follow.setFollowedAt(new Date().getTime());
                                 FirebaseDatabase.getInstance().getReference()
@@ -215,6 +129,7 @@ public class searchAdapter extends RecyclerView.Adapter<searchAdapter.seachViewH
                                                         holder.btnFollow.setTextColor(context.getColor(R.color.material_dynamic_neutral70));
                                                         holder.btnFollow.setEnabled(false);
                                                         Toast.makeText(context, "you followed " + user.getName(), Toast.LENGTH_SHORT).show();
+
                                                         notificationModel notification = new notificationModel();
                                                         notification.setNotificationBy(FirebaseAuth.getInstance().getUid());
                                                         notification.setNotificatonAt(new Date().getTime());
@@ -224,8 +139,6 @@ public class searchAdapter extends RecyclerView.Adapter<searchAdapter.seachViewH
                                                                 .child(user.getUserId())
                                                                 .push()
                                                                 .setValue(notification);
-                                                        // here we are adding the following details to the currentUser
-                                                        setFollowing(user);
                                                     });
                                         });
                             });
@@ -237,125 +150,28 @@ public class searchAdapter extends RecyclerView.Adapter<searchAdapter.seachViewH
 
                     }
                 });
-    }
 
-
-    public void deleteFollowing(UserModel user) {
-
-        FirebaseDatabase.getInstance().getReference()
-                .child("Users")
-                .child(auth.getUid())
-                .child("followings")
-                .child(user.getUserId())
-                .removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-
-                        database.getReference().child("Users")
-                                .child(auth.getUid())
-                                .addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                                        if (snapshot.exists()) {
-                                            UserModel currUser = snapshot.getValue(UserModel.class);
-                                            database.getReference().child("Users")
-                                                    .child(auth.getUid())
-                                                    .child("followingCounts")
-                                                    .setValue(currUser.getFollowingCounts() - 1 <0 ?0:currUser.getFollowingCounts()-1)
-                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void unused) {
-
-                                                        }
-                                                    });
-
-                                        }
-
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-
-                                    }
-                                });
-
-
-                        Log.d("curruser", "follwoingcount added");
-                    }
-                });
 
     }
 
-    public void setFollowing(UserModel user) {
-
-        FirebaseDatabase.getInstance().getReference()
-                .child("Users")
-                .child(auth.getUid())
-                .child("followings")
-                .child(user.getUserId())
-                .setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-
-                        database.getReference().child("Users")
-                                .child(auth.getUid())
-                                .addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                                        if (snapshot.exists()) {
-                                            UserModel currUser = snapshot.getValue(UserModel.class);
-                                            database.getReference().child("Users")
-                                                    .child(auth.getUid())
-                                                    .child("followingCounts")
-                                                    .setValue(currUser.getFollowingCounts() + 1)
-                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void unused) {
-
-                                                        }
-                                                    });
-
-                                        }
-
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-
-                                    }
-                                });
-
-
-                        Log.d("curruser", "follwoingcount added");
-                    }
-                });
+    @Override
+    public int getItemCount() {
+        return list.size();
     }
 
+    public class seachViewHolder extends RecyclerView.ViewHolder {
 
-    class NameComparator implements Comparator<UserModel> {
-        private String name;
+        Button btnFollow;
+        TextView idName, intrest;
+        ImageView idProfile;
 
-        public NameComparator(String searchedName) {
-            this.name = searchedName;
-        }
+        public seachViewHolder(@NonNull View itemView) {
+            super(itemView);
 
-        @Override
-        public int compare(UserModel user1, UserModel user2) {
-
-            if (user1.getProfession() == null || user1.getProfession().isEmpty())
-                return 0;
-            if (user2.getProfession() == null || user2.getProfession().isEmpty())
-                return 0;
-
-            if (user1.getName().toLowerCase().trim().equals(name.toLowerCase().trim())) {
-                return -1;
-            } else if (user2.getName().trim().toLowerCase().equals(name.toLowerCase().trim())) {
-                return 1;
-            } else {
-                return user1.getProfession().toLowerCase().compareTo(user2.getProfession().toLowerCase());
-            }
+            btnFollow = itemView.findViewById(R.id.btnEdit);
+            idName = itemView.findViewById(R.id.idName);
+            intrest = itemView.findViewById(R.id.intrest);
+            idProfile = itemView.findViewById(R.id.profile_image);
         }
     }
 }

@@ -21,7 +21,6 @@
             diagonal:diagonal_angle="10"
             diagonal:diagonal_direction="left"
             diagonal:diagonal_position="bottom">
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -52,7 +51,6 @@
 
         </com.github.florent37.diagonallayout.DiagonalLayout>
     </LinearLayout>
-
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/nav_profile_image"
         android:layout_width="@dimen/_70mdp"
@@ -66,7 +64,15 @@
         app:layout_constraintTop_toTopOf="@+id/linearLayout"
         app:layout_constraintVertical_bias="1.0" />
 
-
+    <ImageView
+        android:id="@+id/changeCoverPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/image"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <View
         android:id="@+id/view7"
@@ -78,7 +84,17 @@
         app:layout_constraintStart_toStartOf="@+id/editNavProfile"
         app:layout_constraintTop_toTopOf="@+id/editNavProfile" />
 
-
+    <ImageView
+        android:id="@+id/editNavProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/edit"
+        app:layout_constraintBottom_toBottomOf="@+id/nav_profile_image"
+        app:layout_constraintEnd_toEndOf="@+id/nav_profile_image"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="@+id/nav_profile_image"
+        app:layout_constraintTop_toTopOf="@+id/nav_profile_image"
+        app:layout_constraintVertical_bias="0.9" />
 
     <TextView
         android:id="@+id/NavprofileName"

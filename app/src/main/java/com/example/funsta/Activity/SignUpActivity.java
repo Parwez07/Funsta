@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 public class SignUpActivity extends AppCompatActivity {
 
     TextView login;
-    EditText idName, idEmail, idPassword, idcp,idprofession;
+    EditText idName, idEmail, idPassword, idcp;
     Button btnSignUp;
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
@@ -42,7 +42,6 @@ public class SignUpActivity extends AppCompatActivity {
         btnSignUp = findViewById(R.id.btnSignUp);
         login = findViewById(R.id.tvLogin);
         idcp = findViewById(R.id.idCp);
-        idprofession = findViewById(R.id.idProfession);
 
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
@@ -77,7 +76,6 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void register(String email, String password) {
         String name = idName.getText().toString();
-        String profession = idprofession.getText().toString();
         if (name.isEmpty()) {
             Toast.makeText(SignUpActivity.this, "Please Enter your name", Toast.LENGTH_SHORT).show();
             return;
@@ -89,11 +87,10 @@ public class SignUpActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if (task.isSuccessful()) {
-                            UserModel user = new UserModel(name, email, password,profession);
+                            UserModel user = new UserModel(name, email, password);
                             String id = task.getResult().getUser().getUid().toString();
                             database.getReference().child("Users").child(id).setValue(user);
                             Toast.makeText(SignUpActivity.this, "User added Successfully", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(SignUpActivity.this,LoginActivity.class));
                         } else {
                             Toast.makeText(SignUpActivity.this, "Error Occured", Toast.LENGTH_SHORT).show();
                         }

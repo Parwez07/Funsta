@@ -219,7 +219,7 @@ public class commentAdapter extends RecyclerView.Adapter<commentAdapter.commentV
 
         public void deleteComment(int position) {
             AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-            dialog.setTitle("DELETE");
+            dialog.setTitle("Unfollow");
             dialog.setMessage("Delete the Comment permanently ?");
 
             dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
