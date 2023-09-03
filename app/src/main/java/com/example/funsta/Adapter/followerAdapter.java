@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.funsta.Model.UserModel;
-import com.example.funsta.Model.followModel;
+import com.example.funsta.Model.followersModel;
 import com.example.funsta.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,9 +24,9 @@ import java.util.ArrayList;
 public class followerAdapter extends RecyclerView.Adapter<followerAdapter.friendViewHolder> {
 
     Context context;
-    ArrayList<followModel> friendList;
+    ArrayList<followersModel> friendList;
 
-    public followerAdapter(Context context, ArrayList<followModel> friendList) {
+    public followerAdapter(Context context, ArrayList<followersModel> friendList) {
         this.context = context;
         this.friendList = friendList;
     }
@@ -43,7 +43,7 @@ public class followerAdapter extends RecyclerView.Adapter<followerAdapter.friend
     @Override
     public void onBindViewHolder(@NonNull friendViewHolder holder, int position) {
 
-        followModel follow = friendList.get(position);
+        followersModel follow = friendList.get(position);
         FirebaseDatabase.getInstance().getReference()
                 .child("Users")
                 .child(follow.getFollowedBy()).addValueEventListener(new ValueEventListener() {

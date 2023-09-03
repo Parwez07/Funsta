@@ -1,8 +1,5 @@
 package com.example.funsta.Activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +7,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.funsta.MainActivity;
 import com.example.funsta.R;
@@ -24,6 +24,9 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private GradientBackgroundPainter gradientBackgroundPainter;
+    private static final long DOUBLE_BACK_PRESS_INTERVAL = 2000; // 2 seconds
+    private long lastBackPressTime = 0;
+
     TextView register ;
     EditText idemail,idpassword;
     Button btnLogin;
@@ -85,7 +88,20 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        long currentTime = System.currentTimeMillis();
+
+        if (currentTime - lastBackPressTime < DOUBLE_BACK_PRESS_INTERVAL) {
+            super.onBackPressed(); // Close the app completely
+        } else {
+            lastBackPressTime = currentTime;
+            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
+
 //    @Override//        View backgroundImage = findViewById(R.id.root_view);
 //        final int[] drawables = new int[3];
 //        drawables[0] = R.drawable.gradient_1;

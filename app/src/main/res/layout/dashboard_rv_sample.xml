@@ -73,7 +73,7 @@
                 app:layout_constraintVertical_bias="0.13" />
 
             <TextView
-                android:id="@+id/intrest"
+                android:id="@+id/profession"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Travler,LifeLover"

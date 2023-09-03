@@ -18,6 +18,9 @@
         android:theme="@style/Theme.Funsta"
         tools:targetApi="31">
         <activity
+            android:name=".Activity.ProfileEditActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.CommentActivity"
             android:exported="false" />
         <activity

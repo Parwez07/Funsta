@@ -29,13 +29,13 @@
         android:textColor="@color/black"
         android:textSize="18dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/idIntrest"
+        app:layout_constraintBottom_toTopOf="@+id/idProfession"
         app:layout_constraintStart_toEndOf="@+id/profile_image"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
-        android:id="@+id/idIntrest"
+        android:id="@+id/idProfession"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"

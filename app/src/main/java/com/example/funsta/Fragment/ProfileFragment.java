@@ -28,7 +28,7 @@ import android.widget.Toast;
 
 import com.example.funsta.Adapter.followerAdapter;
 import com.example.funsta.Model.UserModel;
-import com.example.funsta.Model.followModel;
+import com.example.funsta.Model.followersModel;
 import com.example.funsta.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -55,7 +55,7 @@ public class ProfileFragment extends Fragment {
     public ActivityResultLauncher<Intent> ActivityResultSelectImg, ActivityResultProfile;
 
     RecyclerView friendRv;
-    ArrayList<followModel> friendList;
+    ArrayList<followersModel> friendList;
     ImageView changeCoverPic, idProfile;
 
     FirebaseAuth auth;
@@ -113,7 +113,7 @@ public class ProfileFragment extends Fragment {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         friendList.clear();
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            followModel follow = dataSnapshot.getValue(followModel.class);
+                            followersModel follow = dataSnapshot.getValue(followersModel.class);
                             friendList.add(follow);
                         }
                         adapter.notifyDataSetChanged();
@@ -172,7 +172,7 @@ public class ProfileFragment extends Fragment {
                 if (snapshot.exists()) {
 
                     UserModel user = snapshot.getValue(UserModel.class);
-                    Log.d("userDetails",user.getFollowersCount()+" "+user);
+                    Log.d("userDetails",user.getFollowingCounts()+" "+user);
                     Picasso.get().load(user.getCover_photo())
                             .placeholder(R.drawable.picture)
                             .into(idProfile);
@@ -181,7 +181,7 @@ public class ProfileFragment extends Fragment {
                     Picasso.get().load(user.getProfile())
                             .placeholder(R.drawable.picture)
                             .into(profile);
-                    followers.setText(user.getFollowersCount()+"");
+                    followers.setText(user.getFollowingCounts()+"");
 
 
                 }

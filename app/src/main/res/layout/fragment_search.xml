@@ -45,15 +45,14 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerInParent="true"
-                    android:layout_toEndOf="@+id/searchImg"
-                    android:textColor="@color/black"
                     android:layout_marginLeft="5dp"
+                    android:maxLines="1"
                     android:layout_marginRight="15dp"
+                    android:layout_toEndOf="@+id/searchImg"
                     android:background="@android:color/transparent"
                     android:hint="Search.."
-                    android:textSize="20sp"
-
-                    />
+                    android:textColor="@color/black"
+                    android:textSize="20sp" />
 
 
             </RelativeLayout>
