@@ -7,6 +7,17 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -16,19 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.funsta.Model.PostModel;
 import com.example.funsta.Model.UserModel;
@@ -42,6 +41,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.iammert.library.readablebottombar.ReadableBottomBar;
 import com.squareup.picasso.Picasso;
 
 import java.util.Date;
@@ -53,9 +53,11 @@ public class PostFragment extends Fragment {
     Button btnPost;
     EditText postDescription;
     ImageView addImg, postImg, profileImg;
-    TextView userName;
+    TextView userName, profession;
     Uri uri;
     String description;
+
+
 
     FirebaseAuth auth;
     FirebaseStorage storage;
@@ -90,10 +92,10 @@ public class PostFragment extends Fragment {
         postImg = view.findViewById(R.id.imgPost);
         profileImg = view.findViewById(R.id.profile_image);
         userName = view.findViewById(R.id.idName);
-
+        profession = view.findViewById(R.id.idProfession);
 
         registerActivityForSelectImg();
-        fetchingCoverPhoto();
+        fetchingUserDetails();
 
 
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -174,6 +176,8 @@ public class PostFragment extends Fragment {
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void unused) {
+
+                                                    postCount();
                                                     Toast.makeText(getContext(), "Posted Succesful", Toast.LENGTH_SHORT).show();
                                                     dialog.dismiss();
 
@@ -196,8 +200,13 @@ public class PostFragment extends Fragment {
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
+                                    postDescription.setText("");
+                                    postCount();
                                     Toast.makeText(getContext(), "Posted Succesful", Toast.LENGTH_SHORT).show();
                                     dialog.dismiss();
+
+                                    ReadableBottomBar readableBottomBar = getActivity().findViewById(R.id.readableButtomBar);
+                                    readableBottomBar.selectItem(0);
 
                                 }
                             });
@@ -208,6 +217,33 @@ public class PostFragment extends Fragment {
         return view;
     }
 
+    private  void postCount(){
+        database.getReference().child("Users")
+                .child(auth.getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists()){
+                            UserModel user = snapshot.getValue(UserModel.class);
+                            database.getReference().child("Users")
+                                    .child(auth.getUid())
+                                    .child("postCounts")
+                                    .setValue(user.getPostCounts()+1).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+                                            Log.d("postCount","postCount incremented"+user.getPostCounts()+1);
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+    }
     public void registerActivityForSelectImg() {
 
         ActivityResultSelectImg = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -232,7 +268,7 @@ public class PostFragment extends Fragment {
 
     }
 
-    private void fetchingCoverPhoto() {
+    private void fetchingUserDetails() {
 
         database.getReference().child("Users").child(auth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -241,14 +277,12 @@ public class PostFragment extends Fragment {
                 if (snapshot.exists()) {
 
                     UserModel user = snapshot.getValue(UserModel.class);
-                    Log.d("userDetails", user.getFollowersCount() + " " + user);
+                    Log.d("userDetails", user.getFollowingCounts() + " " + user);
 
                     //idProfile.setImageDrawable(null);
                     userName.setText(user.getName());
-                    Picasso.get().load(user.getProfile())
-                            .placeholder(R.drawable.picture)
-                            .into(profileImg);
-
+                    profession.setText(user.getProfession());
+                    Picasso.get().load(user.getProfile()).placeholder(R.drawable.picture).into(profileImg);
 
                 }
             }
@@ -259,4 +293,6 @@ public class PostFragment extends Fragment {
             }
         });
     }
+
+
 }

@@ -1,20 +1,14 @@
 package com.example.funsta.Model;
 
-import com.example.funsta.R;
-
 public class UserModel {
-    private String name,email,password;
-    private String cover_photo,profile,userId;
-    int followersCount;
-    int postCount;
+    private String name;
+    private String email;
+    private String password;
 
-    public int getPostCount() {
-        return postCount;
-    }
-
-    public void setPostCount(int postCount) {
-        this.postCount = postCount;
-    }
+    private String profession;
+    private String cover_photo, profile, userId;
+    int followingCounts,followersCount;
+    int postCounts;
 
     public int getFollowersCount() {
         return followersCount;
@@ -22,6 +16,30 @@ public class UserModel {
 
     public void setFollowersCount(int followersCount) {
         this.followersCount = followersCount;
+    }
+
+    public String getProfession() {
+        return profession;
+    }
+
+    public void setProfession(String profession) {
+        this.profession = profession;
+    }
+
+    public int getPostCounts() {
+        return postCounts;
+    }
+
+    public void setPostCounts(int postCounts) {
+        this.postCounts = postCounts;
+    }
+
+    public int getFollowingCounts() {
+        return followingCounts;
+    }
+
+    public void setFollowingCounts(int followingCounts) {
+        this.followingCounts = followingCounts;
     }
 
     public String getUserId() {
@@ -42,17 +60,6 @@ public class UserModel {
 
     }
 
-    private String intrest;
-
-    public String getIntrest() {
-        return intrest;
-    }
-
-    public void setIntrest(String intrest) {
-        this.intrest = intrest;
-    }
-
-
 
     public UserModel() {
     }
@@ -66,10 +73,11 @@ public class UserModel {
     }
 
 
-    public UserModel(String name, String email, String password) {
+    public UserModel(String name, String email, String password, String profession) {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.profession = profession;
     }
 
     public String getName() {

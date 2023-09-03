@@ -52,8 +52,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image"
-        android:layout_width="@dimen/_60mdp"
-        android:layout_height="@dimen/_60mdp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
 
         android:layout_marginTop="8dp"
         android:src="@drawable/profile_image"
@@ -66,7 +66,7 @@
         android:id="@+id/idName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="10dp"
         android:fontFamily="@font/alata"
         android:text="TextView"
         android:textColor="@color/black"
@@ -75,16 +75,18 @@
         app:layout_constraintBottom_toBottomOf="@+id/profile_image"
         app:layout_constraintStart_toEndOf="@+id/profile_image"
         app:layout_constraintTop_toTopOf="@+id/profile_image"
-        app:layout_constraintVertical_bias="0.26" />
+        app:layout_constraintVertical_bias="0.13999999" />
 
     <TextView
-        android:id="@+id/idIntrest"
+        android:id="@+id/idProfession"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
-        android:text="TextView"
+        android:text="Andriod Devloper "
         android:textSize="18dp"
+        app:layout_constraintBottom_toTopOf="@+id/idPostDescription"
         app:layout_constraintEnd_toEndOf="@+id/idName"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/idName"
         app:layout_constraintTop_toBottomOf="@+id/idName" />
 

@@ -10,19 +10,6 @@ import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.TextPaint;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,9 +18,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
-import com.example.funsta.Adapter.postAdapter;
 import com.example.funsta.Adapter.StoryAdapter;
+import com.example.funsta.Adapter.postAdapter;
 import com.example.funsta.Model.PostModel;
 import com.example.funsta.Model.StoryModel;
 import com.example.funsta.Model.userStories;
@@ -257,7 +254,6 @@ public class HomeFragment extends Fragment {
                                                 @Override
                                                 public void onSuccess(Void unused) {
                                                     userStories stories = new userStories(uri.toString(), story.getStoryAt());
-
                                                     database.getReference().child("stories")
                                                             .child(auth.getUid())
                                                             .child("userStories")

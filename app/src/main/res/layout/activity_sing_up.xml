@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/ivLogo"
-        android:layout_width="@dimen/_150mdp"
-        android:layout_height="@dimen/_150mdp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/textView7"
         app:layout_constraintEnd_toEndOf="parent"
@@ -59,11 +59,11 @@
         android:layout_height="0dp"
         android:layout_marginTop="4dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/textView15"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView8">
+        app:layout_constraintTop_toBottomOf="@+id/textView8"
+        >
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -114,7 +114,33 @@
                 android:textSize="20dp" />
 
         </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp"
+            app:boxStrokeColor="@color/color3"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:helperText="*Required"
+            app:helperTextTextColor="#FF0000"
+            app:startIconDrawable="@drawable/profession"
 
+
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/idProfession"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/buttongradient"
+                android:hint="your profession please"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textSize="20dp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -170,7 +196,7 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSignUp"
             android:layout_width="300dp"
-            android:layout_height="@dimen/_40mdp"
+            android:layout_height="45dp"
             app:boxStrokeColor="@color/color3"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/_10mdp"
