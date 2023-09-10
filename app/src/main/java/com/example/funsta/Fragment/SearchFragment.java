@@ -98,9 +98,10 @@ public class SearchFragment extends Fragment {
 
                     if (!dataSnapshot.getKey().equals(auth.getCurrentUser().getUid())) {
                         list.add(user);
-                    } else {
+                    }
+                    else {
 
-                        userProfession[0] = user.getProfession().toString();
+                        userProfession[0] = user.getProfession();
                         Log.d("userid", "datanapshot key " + userProfession[0] + dataSnapshot.getKey() + "auth currentuser " + auth.getCurrentUser().getUid());
                     }
                 }
@@ -121,7 +122,7 @@ public class SearchFragment extends Fragment {
 
     private void sortList(ArrayList<UserModel> list, String profession) {
 
-        if (!profession.isEmpty())
+        if (profession!=null && !profession.isEmpty())
             Collections.sort(list, new ProfessionComparator(profession));
     }
 

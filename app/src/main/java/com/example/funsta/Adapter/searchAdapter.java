@@ -16,6 +16,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.funsta.MainActivity;
+import com.example.funsta.Model.DatatoProfileSingleton;
 import com.example.funsta.Model.UserModel;
 import com.example.funsta.Model.followersModel;
 import com.example.funsta.Model.notificationModel;
@@ -26,6 +28,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.iammert.library.readablebottombar.ReadableBottomBar;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -38,7 +41,7 @@ public class searchAdapter extends RecyclerView.Adapter<searchAdapter.seachViewH
     Context context;
     ArrayList<UserModel> list;
 
-
+    UserModel user;
     ArrayList<UserModel> duplicateList;
 
     FirebaseDatabase database;
@@ -66,21 +69,37 @@ public class searchAdapter extends RecyclerView.Adapter<searchAdapter.seachViewH
     @Override
     public void onBindViewHolder(@NonNull seachViewHolder holder, int position) {
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        // when the user click on the itemview we will show that user details at the profile fragment
 
         if (duplicateList.size() > 0) {
-            UserModel user = duplicateList.get(position);
 
+            user = duplicateList.get(position);
             userDetailsFollowUnfollow(user, holder);
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    DatatoProfileSingleton.getInstance().setSharedData(duplicateList.get(holder.getAdapterPosition()));
+                    ReadableBottomBar readableBottomBar = ((MainActivity) context).findViewById(R.id.readableButtomBar);
+                    readableBottomBar.selectItem(4);
+
+
+                }
+            });
         } else {
-            UserModel user = list.get(position);
-
+            user = list.get(position);
             userDetailsFollowUnfollow(user, holder);
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    DatatoProfileSingleton.getInstance().setSharedData(list.get(holder.getAdapterPosition()));
+                    ReadableBottomBar readableBottomBar = ((MainActivity) context).findViewById(R.id.readableButtomBar);
+                    readableBottomBar.selectItem(4);
+
+                }
+            });
         }
 
 
@@ -134,7 +153,8 @@ public class searchAdapter extends RecyclerView.Adapter<searchAdapter.seachViewH
     }
 
 
-    private void userDetailsFollowUnfollow(UserModel user, seachViewHolder holder) {
+    public void userDetailsFollowUnfollow(UserModel user, seachViewHolder holder) {
+
         holder.profession.setText(user.getProfession());
         holder.idName.setText(user.getName());
         Picasso.get().load(user.getProfile())
@@ -345,9 +365,11 @@ public class searchAdapter extends RecyclerView.Adapter<searchAdapter.seachViewH
         public int compare(UserModel user1, UserModel user2) {
 
             if (user1.getProfession() == null || user1.getProfession().isEmpty())
-                return 0;
+                return 1;
             if (user2.getProfession() == null || user2.getProfession().isEmpty())
-                return 0;
+                return -1;
+
+
 
             if (user1.getName().toLowerCase().trim().equals(name.toLowerCase().trim())) {
                 return -1;

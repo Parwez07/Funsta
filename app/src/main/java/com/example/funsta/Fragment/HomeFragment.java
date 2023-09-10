@@ -142,11 +142,10 @@ public class HomeFragment extends Fragment {
                                 for(DataSnapshot snapshot1 : storySnapshot.child("userStories").getChildren()){
 
                                     userStories user = snapshot1.getValue(userStories.class);
-                                    if(!user.getStoryImg().isEmpty()||(user.getStoryImg()!=null))
+                                    if((user.getStoryImg()!=null) ||!user.getStoryImg().isEmpty())
                                         stories.add(user);
                                 }
                                 story.setStories(stories);
-
                                 list.add(story);
                             }
                             storyRv.setAdapter(adapter);

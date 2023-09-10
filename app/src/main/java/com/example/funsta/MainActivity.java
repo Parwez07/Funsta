@@ -2,39 +2,24 @@ package com.example.funsta;
 
 import static com.example.funsta.R.id.container;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.Navigation;
-
-import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.provider.MediaStore;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.funsta.Activity.LoginActivity;
 import com.example.funsta.Fragment.HomeFragment;
@@ -44,21 +29,14 @@ import com.example.funsta.Fragment.ProfileFragment;
 import com.example.funsta.Fragment.SearchFragment;
 import com.example.funsta.Fragment.newProfileFragment;
 import com.example.funsta.Model.UserModel;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.iammert.library.readablebottombar.ReadableBottomBar;
 import com.squareup.picasso.Picasso;
-
-import java.util.List;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -73,10 +51,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DrawerLayout drawerLayout;
     NavigationView navigationView;
 
-    ImageView nav_menu;
+    ImageView nav_menu, nav_profileImg, nav_coverImg;
     TextView nav_profileName;
 
-
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     ActionBarDrawerToggle toggle;
 
@@ -89,14 +67,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
 
-
         drawerLayout = findViewById(R.id.drawerLayout);
         toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
         navigationView = findViewById(R.id.navigationView);
         toolbar = findViewById(R.id.toolbar);
         nav_menu = findViewById(R.id.nav_menu);
         View headerView = navigationView.getHeaderView(0);
-        nav_profileName = headerView.findViewById(R.id.NavprofileName);
 
 
         setSupportActionBar(toolbar);
@@ -104,7 +80,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
         toggle.syncState();
 
-
+        nav_profileName = headerView.findViewById(R.id.NavprofileName);
+        nav_profileImg = headerView.findViewById(R.id.nav_profile_image);
+        nav_coverImg = headerView.findViewById(R.id.nav_idProfile);
 
         nav_menu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 switch (i) {
 
                     case 0:
-
                         setToolbarAndDrawerState(false);
                         transaction.replace(container, new HomeFragment());
                         break;
@@ -150,7 +127,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         transaction.replace(container, new PostFragment());
                         break;
                     case 3:
-
                         setToolbarAndDrawerState(false);
                         transaction.replace(container, new SearchFragment());
                         break;
@@ -176,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Method to toggle Toolbar and NavigationDrawer
     public void setToolbarAndDrawerState(boolean enabled) {
         if (enabled) {
+            fetchUserDetails();
             getSupportActionBar().show();
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
@@ -183,6 +160,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportActionBar().hide();
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         }
+    }
+
+    public void fetchUserDetails() {
+
+        database.getReference().child("Users")
+                .child(auth.getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        UserModel user = snapshot.getValue(UserModel.class);
+                        nav_profileName.setText(user.getName());
+                        Picasso.get()
+                                .load(user.getCover_photo())
+                                .placeholder(R.drawable.profile_image)
+                                .into(nav_coverImg);
+
+                        Picasso.get()
+                                .load(user.getProfile())
+                                .placeholder(R.drawable.picture)
+                                .into(nav_profileImg);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
     }
 
     @Override
@@ -203,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } else {
                 // Navigate to home fragment
                 readableBottomBar.selectItem(0);
+
             }
         }
     }

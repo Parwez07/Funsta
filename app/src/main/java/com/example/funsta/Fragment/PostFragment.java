@@ -1,5 +1,7 @@
 package com.example.funsta.Fragment;
 
+import static com.example.funsta.Fragment.ProfileFragment.REQUEST_ID_MULTIPLE_PERMISSIONS;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -56,9 +58,6 @@ public class PostFragment extends Fragment {
     TextView userName, profession;
     Uri uri;
     String description;
-
-
-
     FirebaseAuth auth;
     FirebaseStorage storage;
     FirebaseDatabase database;
@@ -133,10 +132,13 @@ public class PostFragment extends Fragment {
         addImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("click", "correct");
                 if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(getContext()), Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
-                    new ActivityResultContracts.RequestMultiplePermissions();
+                    Log.d("click", "correct if ");
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_ID_MULTIPLE_PERMISSIONS);
                 } else {
+                    Log.d("click", "correct else");
                     Intent galleryIntent = new Intent();
                     galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                     galleryIntent.setType("image/*");
@@ -146,9 +148,13 @@ public class PostFragment extends Fragment {
                     Log.d("incoverpic", "correct");
                 }
             }
+
+
+
         });
 
         btnPost.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 dialog.show();
@@ -180,7 +186,7 @@ public class PostFragment extends Fragment {
                                                     postCount();
                                                     Toast.makeText(getContext(), "Posted Succesful", Toast.LENGTH_SHORT).show();
                                                     dialog.dismiss();
-
+                                                    getActivity().finish();
                                                 }
                                             });
                                 }
@@ -205,8 +211,8 @@ public class PostFragment extends Fragment {
                                     Toast.makeText(getContext(), "Posted Succesful", Toast.LENGTH_SHORT).show();
                                     dialog.dismiss();
 
-                                    ReadableBottomBar readableBottomBar = getActivity().findViewById(R.id.readableButtomBar);
-                                    readableBottomBar.selectItem(0);
+
+                                    getActivity().finish();
 
                                 }
                             });

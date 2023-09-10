@@ -1,6 +1,7 @@
 package com.example.funsta.Adapter;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.text.Editable;
 import android.text.Html;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -20,10 +22,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.funsta.Model.UserModel;
 import com.example.funsta.Model.commentModel;
+import com.example.funsta.Model.followersModel;
+import com.example.funsta.Model.notificationModel;
 import com.example.funsta.R;
 import com.github.marlonlom.utilities.timeago.TimeAgo;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,6 +42,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class commentAdapter extends RecyclerView.Adapter<commentAdapter.commentViewHolder> {
 
@@ -281,4 +287,266 @@ public class commentAdapter extends RecyclerView.Adapter<commentAdapter.commentV
     }
 
 
+    public static class followers_followingAdapter extends RecyclerView.Adapter<followers_followingAdapter.followDetails> {
+
+        Context context;
+        ArrayList<UserModel> list;
+
+        UserModel user;
+
+        FirebaseDatabase database;
+
+        FirebaseAuth auth;
+
+        public followers_followingAdapter(Context context, ArrayList<UserModel> list) {
+            this.context = context;
+            this.list = list;
+            auth = FirebaseAuth.getInstance();
+            database = FirebaseDatabase.getInstance();
+
+        }
+
+        @NonNull
+        @Override
+        public followDetails onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+            View view = LayoutInflater.from(context).inflate(R.layout.user_search, parent, false);
+
+            return new followDetails(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull followDetails holder, int position) {
+
+            user = list.get(position);
+            userDetailsFollowUnfollow(user, holder);
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return list.size();
+        }
+
+
+        public class followDetails extends RecyclerView.ViewHolder {
+
+
+            Button btnFollow;
+            TextView idName, profession;
+            ImageView idProfile;
+
+            public followDetails(@NonNull View itemView) {
+                super(itemView);
+
+                btnFollow = itemView.findViewById(R.id.btnEdit);
+                idName = itemView.findViewById(R.id.idName);
+                profession = itemView.findViewById(R.id.idProfession);
+                idProfile = itemView.findViewById(R.id.profile_image);
+            }
+        }
+
+
+        public void userDetailsFollowUnfollow(UserModel user, followDetails holder) {
+
+            holder.profession.setText(user.getProfession());
+            holder.idName.setText(user.getName());
+            Picasso.get().load(user.getProfile())
+                    .placeholder(R.drawable.picture)
+                    .into(holder.idProfile);
+
+            FirebaseDatabase.getInstance().getReference()
+                    .child("Users")
+                    .child(user.getUserId())
+                    .child("followers")
+                    .child(FirebaseAuth.getInstance().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                            if (snapshot.exists()) {
+                                holder.btnFollow.setBackground(ContextCompat.getDrawable(context, R.drawable.following_btn));
+                                holder.btnFollow.setText("Following");
+                                holder.btnFollow.setTextColor(context.getColor(R.color.material_dynamic_neutral70));
+                                holder.btnFollow.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+                                        dialog.setTitle("Unfollow");
+                                        dialog.setMessage("Do you really want to Unfollow?");
+                                        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.cancel();
+                                            }
+                                        });
+                                        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                FirebaseDatabase.getInstance().getReference()
+                                                        .child("Users").child(user.getUserId())
+                                                        .child("followers")
+                                                        .child(FirebaseAuth.getInstance().getUid())
+                                                        .removeValue()
+                                                        .addOnSuccessListener(unused -> {
+                                                            FirebaseDatabase.getInstance().getReference()
+                                                                    .child("Users")
+                                                                    .child(user.getUserId())
+                                                                    .child("followersCount")
+                                                                    .setValue(user.getFollowersCount() - 1).addOnSuccessListener(unused1 -> {
+                                                                        holder.btnFollow.setBackground(ContextCompat.getDrawable(context, R.drawable.buttom));
+                                                                        holder.btnFollow.setText("Follow");
+                                                                        holder.btnFollow.setTextColor(context.getColor(R.color.white));
+                                                                        Toast.makeText(context, "you Unfollow " + user.getName(), Toast.LENGTH_SHORT).show();
+
+                                                                        // here we are deleting the following user and decrementing the count
+                                                                        deleteFollowing(user);
+                                                                    });
+                                                        });
+                                            }
+                                        });
+                                        dialog.show();
+                                        dialog.create();
+                                    }
+                                });
+                            } else {
+                                holder.btnFollow.setOnClickListener(v -> {
+                                    followersModel follow = new followersModel();
+                                    follow.setFollowedBy(FirebaseAuth.getInstance().getUid());
+                                    follow.setFollowedAt(new Date().getTime());
+                                    FirebaseDatabase.getInstance().getReference()
+                                            .child("Users").child(user.getUserId())
+                                            .child("followers")
+                                            .child(FirebaseAuth.getInstance().getUid())
+                                            .setValue(follow)
+                                            .addOnSuccessListener(unused -> {
+                                                FirebaseDatabase.getInstance().getReference()
+                                                        .child("Users")
+                                                        .child(user.getUserId())
+                                                        .child("followersCount")
+                                                        .setValue(user.getFollowersCount() + 1).addOnSuccessListener(unused1 -> {
+                                                            holder.btnFollow.setBackground(ContextCompat.getDrawable(context, R.drawable.following_btn));
+                                                            holder.btnFollow.setText("Following");
+                                                            holder.btnFollow.setTextColor(context.getColor(R.color.material_dynamic_neutral70));
+                                                            holder.btnFollow.setEnabled(false);
+                                                            Toast.makeText(context, "you followed " + user.getName(), Toast.LENGTH_SHORT).show();
+                                                            notificationModel notification = new notificationModel();
+                                                            notification.setNotificationBy(FirebaseAuth.getInstance().getUid());
+                                                            notification.setNotificatonAt(new Date().getTime());
+                                                            notification.setType("follow");
+                                                            FirebaseDatabase.getInstance().getReference()
+                                                                    .child("notifications")
+                                                                    .child(user.getUserId())
+                                                                    .push()
+                                                                    .setValue(notification);
+                                                            // here we are adding the following details to the currentUser
+                                                            setFollowing(user);
+                                                        });
+                                            });
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+        }
+
+
+        public void deleteFollowing(UserModel user) {
+
+            FirebaseDatabase.getInstance().getReference()
+                    .child("Users")
+                    .child(auth.getUid())
+                    .child("followings")
+                    .child(user.getUserId())
+                    .removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+
+                            database.getReference().child("Users")
+                                    .child(auth.getUid())
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                            if (snapshot.exists()) {
+                                                UserModel currUser = snapshot.getValue(UserModel.class);
+                                                database.getReference().child("Users")
+                                                        .child(auth.getUid())
+                                                        .child("followingCounts")
+                                                        .setValue(currUser.getFollowingCounts() - 1 < 0 ? 0 : currUser.getFollowingCounts() - 1)
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void unused) {
+
+                                                            }
+                                                        });
+
+                                            }
+
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
+
+
+                            Log.d("curruser", "follwoingcount added");
+                        }
+                    });
+
+        }
+
+        public void setFollowing(UserModel user) {
+
+            FirebaseDatabase.getInstance().getReference()
+                    .child("Users")
+                    .child(auth.getUid())
+                    .child("followings")
+                    .child(user.getUserId())
+                    .setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+
+                            database.getReference().child("Users")
+                                    .child(auth.getUid())
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                            if (snapshot.exists()) {
+                                                UserModel currUser = snapshot.getValue(UserModel.class);
+                                                database.getReference().child("Users")
+                                                        .child(auth.getUid())
+                                                        .child("followingCounts")
+                                                        .setValue(currUser.getFollowingCounts() + 1)
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void unused) {
+
+                                                            }
+                                                        });
+
+                                            }
+
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
+
+
+                            Log.d("curruser", "follwoingcount added");
+                        }
+                    });
+        }
+
+
+    }
 }

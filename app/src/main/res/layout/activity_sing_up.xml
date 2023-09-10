@@ -45,6 +45,7 @@
         android:fontFamily="@font/average_sans"
         android:text="Skip the World with Funsta"
         android:textColor="@color/black"
+
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
@@ -85,6 +86,7 @@
                 android:background="@drawable/buttongradient"
                 android:hint="Name"
                 android:inputType="text"
+                android:textColorHint="@color/black"
                 android:textColor="@color/black"
                 android:textSize="20dp" />
 
@@ -110,6 +112,7 @@
                 android:background="@drawable/buttongradient"
                 android:hint="Email"
                 android:inputType="text"
+                android:textColorHint="@color/black"
                 android:textColor="@color/black"
                 android:textSize="20dp" />
 
@@ -127,7 +130,6 @@
             app:helperTextTextColor="#FF0000"
             app:startIconDrawable="@drawable/profession"
 
-
             >
 
             <com.google.android.material.textfield.TextInputEditText
@@ -137,6 +139,7 @@
                 android:background="@drawable/buttongradient"
                 android:hint="your profession please"
                 android:inputType="text"
+                android:textColorHint="@color/black"
                 android:textColor="@color/black"
                 android:textSize="20dp" />
 
@@ -162,6 +165,7 @@
                 android:background="@drawable/buttongradient"
                 android:hint="Password"
                 android:inputType="textPassword"
+                android:textColorHint="@color/black"
                 android:textColor="@color/black"
                 android:textSize="20dp" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -188,6 +192,7 @@
                 android:hint="Conform Password"
                 android:inputType="textPassword"
                 android:textColor="@color/black"
+                android:textColorHint="@color/black"
                 android:textSize="20dp" />
 
 

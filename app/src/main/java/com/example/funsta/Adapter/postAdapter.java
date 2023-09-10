@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -58,6 +59,7 @@ public class postAdapter extends RecyclerView.Adapter<postAdapter.DashboardViewH
 
         if(model.getPostImg()!=null) {
             holder.postImg.setVisibility(View.VISIBLE);
+            holder.save.setVisibility(View.VISIBLE);
             Picasso.get()
                     .load(model.getPostImg())
                     .placeholder(R.drawable.picture)
@@ -121,7 +123,8 @@ public class postAdapter extends RecyclerView.Adapter<postAdapter.DashboardViewH
                                             });
                                 }
                             });
-                        }else{
+                        }
+                        else{
                             holder.like.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -187,6 +190,57 @@ public class postAdapter extends RecyclerView.Adapter<postAdapter.DashboardViewH
                 context.startActivity(chooser);
             }
         });
+
+        database.getReference().child("Users")
+                .child(auth.getUid())
+                .child("savedPosts")
+                .child(model.getPostId()).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists()){
+                            holder.save.setImageResource(R.drawable.saved);
+                            holder.save.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    FirebaseDatabase.getInstance().getReference().child("Users")
+                                            .child(auth.getUid())
+                                            .child("savedPosts")
+                                            .child(model.getPostId())
+                                            .removeValue()
+                                            .addOnSuccessListener(unused -> {
+                                               holder.save.setImageResource(R.drawable.bookmark);
+                                                Toast.makeText(context, "Post removed from your profile", Toast.LENGTH_SHORT).show();
+                                            });
+                                }
+                            });
+
+                        }
+                        else
+                        {
+                            holder.save.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    FirebaseDatabase.getInstance().getReference().child("Users")
+                                            .child(auth.getUid())
+                                            .child("savedPosts")
+                                            .child(model.getPostId())
+                                            .setValue(true).addOnSuccessListener(unused -> {
+
+                                                holder.save.setImageResource(R.drawable.saved);
+                                                Toast.makeText(context, "Posts saved to your profile", Toast.LENGTH_SHORT).show();
+
+                                            });
+                                }
+                            });
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
 
     }
 
