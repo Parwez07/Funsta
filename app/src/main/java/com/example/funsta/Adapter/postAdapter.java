@@ -2,10 +2,13 @@ package com.example.funsta.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +27,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -63,7 +67,42 @@ public class postAdapter extends RecyclerView.Adapter<postAdapter.DashboardViewH
             Picasso.get()
                     .load(model.getPostImg())
                     .placeholder(R.drawable.picture)
-                    .into(holder.postImg);
+                    .into(holder.postImg, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            // Get the loaded image's dimensions
+
+                            int originalImageHeight = holder.postImg.getDrawable().getIntrinsicHeight();
+
+                            // Calculate screen height
+                            DisplayMetrics displayMetrics = new DisplayMetrics();
+                            Display display = ((WindowManager) holder.itemView.getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+                            display.getMetrics(displayMetrics);
+                            int screenHeight = displayMetrics.heightPixels;
+
+                            // Calculate adjusted image height
+                            int adjustedImageHeight;
+                            if (originalImageHeight > screenHeight) {
+                                // Calculate the adjusted height to fit the screen
+                                adjustedImageHeight = screenHeight-200;
+                                Log.d("height",adjustedImageHeight+" ");
+                            } else {
+                                // Use the original height if it's smaller than the screen height
+                                adjustedImageHeight = originalImageHeight;
+                            }
+
+                            // Set adjusted image height
+                            ViewGroup.LayoutParams layoutParams = holder.postImg.getLayoutParams();
+                            layoutParams.height = adjustedImageHeight;
+                            layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                            holder.postImg.setLayoutParams(layoutParams);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+
+                        }
+                    });
         }
         FirebaseDatabase.getInstance().getReference().child("Users")
                 .child(model.getPostedBy()).addValueEventListener(new ValueEventListener() {
