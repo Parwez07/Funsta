@@ -23,5 +23,34 @@ There are many features that i will integrate into this and updation of ui too.
 
 Any feedback or contribution from your side is appreciable..
 
+<img align="left" alt="Coding" width="300" src="https://github.com/Parwez07/Funsta/assets/93080069/ff625037-7d07-4ea3-b8db-e9f7507496d3">
 
-                     
+<img align="center" alt="Coding" width="300" src="https://github.com/Parwez07/Funsta/assets/93080069/559848f8-14d5-485f-affe-a51c1cb05cb3">
+
+<img align="right" alt="Coding" width="300" src="https://github.com/Parwez07/Funsta/assets/93080069/0c99fa39-baa2-48eb-90e6-a802750c2b18">
+
+<br> </br>
+
+<img align="left" alt="Coding" width="300" src="https://github.com/Parwez07/Funsta/assets/93080069/b31d6cff-05ba-4330-921a-16352d45e2af">
+
+<img align="center" alt="Coding" width="300" src="https://github.com/Parwez07/Funsta/assets/93080069/18d86307-2602-4095-b43c-5c06a0b0ddb3">
+
+<img align="right" alt="Coding" width="300" src="https://github.com/Parwez07/Funsta/assets/93080069/c772dbe1-59de-4132-8e34-eff4f56b6914">
+
+
+
+<br> </br>
+
+<img align="right" alt="Coding" width="300" src="https://github.com/Parwez07/Funsta/assets/93080069/341ec18c-bd38-4f3c-8edb-25ffc6288dd0">
+<img align="left" alt="Coding" width="300" src="https://github.com/Parwez07/Funsta/assets/93080069/68f8b27c-d8c2-49e3-9f1b-d817890fdb16">
+
+<img align="center" alt="Coding" width="300" src="https://github.com/Parwez07/Funsta/assets/93080069/c5662e36-2f3f-47a2-9e66-1567afcd6b8e">
+
+
+<br> </br>
+
+
+<img align="center" alt="Coding" width="300" src="https://github.com/Parwez07/Funsta/assets/93080069/371dc640-5515-4d3c-b9b6-65465f661ce0">
+
+
+
